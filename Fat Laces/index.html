@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Fat Laces | Premium Sneaker Resale</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script type="importmap">
+    {"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+  </script>
+  <script>
+    tailwind.config = { darkMode: "class", theme: { extend: { colors: { "primary": "#ff0033", "secondary-blue": "#0066FF", "bg-dark": "#0a0304", "surface": "#1a080b" }, fontFamily: { "heading": ["Bebas Neue", "sans-serif"], "body": ["Space Grotesk", "sans-serif"] } } } }
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    body {
+      background: #0a0304;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden
+    }
+
+    .font-heading {
+      font-family: 'Bebas Neue', sans-serif
+    }
+
+    .scanline {
+      background: linear-gradient(to bottom, rgba(255, 0, 51, 0) 50%, rgba(255, 0, 51, 0.04) 50%);
+      background-size: 100% 4px;
+      pointer-events: none
+    }
+
+    .glow-red {
+      box-shadow: 0 0 20px rgba(255, 0, 51, 0.5)
+    }
+
+    .glow-blue {
+      box-shadow: 0 0 20px rgba(0, 102, 255, 0.5)
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 0, 51, 0.05)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ff0033
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translateX(0)
+      }
+
+      100% {
+        transform: translateX(-50%)
+      }
+    }
+
+    .animate-marquee {
+      display: inline-block;
+      animation: marquee 25s linear infinite
+    }
+
+    /* Hero */
+    #hero-scroll {
+      height: 300vh;
+      position: relative
+    }
+
+    #hero-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden
+    }
+
+    #shoe-canvas {
+      position: relative;
+      z-index: 10;
+      width: 60vw;
+      max-width: 600px;
+      height: 50vh;
+      max-height: 500px
+    }
+
+    /* Shoe card hover spin */
+    .shoe-card-img {
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+    }
+
+    .shoe-card:hover .shoe-card-img {
+      transform: rotateY(180deg)
+    }
+
+    .shoe-card-wrap {
+      perspective: 800px
+    }
+
+    /* Fade animations */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(50px)
+    }
+
+    /* Page sections hidden by default */
+    .page-section {
+      display: none
+    }
+
+    .page-section.active {
+      display: block
+    }
+
+    /* CTA glow */
+    @keyframes pulse-dual {
+
+      0%,
+      100% {
+        box-shadow: -8px 0 25px rgba(255, 0, 51, 0.5), 8px 0 25px rgba(0, 102, 255, 0.5)
+      }
+
+      50% {
+        box-shadow: -12px 0 40px rgba(255, 0, 51, 0.7), 12px 0 40px rgba(0, 102, 255, 0.7)
+      }
+    }
+
+    .btn-glow {
+      animation: pulse-dual 2s ease-in-out infinite
+    }
+
+    /* Mobile menu */
+    #mobile-menu {
+      transform: translateX(100%);
+      transition: transform 0.3s ease
+    }
+
+    #mobile-menu.open {
+      transform: translateX(0)
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav class="sticky top-0 z-50 border-b border-primary/20 bg-bg-dark/80 backdrop-blur-md">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+      <div class="flex items-center gap-6 lg:gap-12">
+        <a class="font-heading text-3xl sm:text-5xl tracking-tight text-primary cursor-pointer"
+          onclick="showPage('marketplace')">FAT<span class="text-white">LACES</span></a>
+        <div class="hidden lg:flex items-center gap-8 text-sm font-medium tracking-widest uppercase">
+          <a class="nav-link hover:text-primary transition-colors cursor-pointer" data-page="marketplace"
+            onclick="showPage('marketplace')">Marketplace</a>
+          <a class="nav-link hover:text-primary transition-colors cursor-pointer" data-page="sell"
+            onclick="showPage('sell')">We Buy Shoes</a>
+          <a class="nav-link hover:text-primary transition-colors cursor-pointer" data-page="authenticity"
+            onclick="showPage('authenticity')">Authenticity</a>
+          <a class="nav-link hover:text-primary transition-colors cursor-pointer" data-page="drops"
+            onclick="showPage('drops')">Drops</a>
+          <a class="nav-link hover:text-primary transition-colors cursor-pointer" data-page="request"
+            onclick="showPage('request')">Request</a>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 sm:gap-6">
+        <button
+          class="hidden sm:flex items-center gap-2 text-sm font-bold tracking-widest uppercase text-white/80 hover:text-white"><span
+            class="material-icons text-lg">person_outline</span>Account</button>
+        <div class="hidden sm:block h-6 w-px bg-white/10"></div>
+        <button class="flex items-center gap-1 sm:gap-2 text-sm font-bold tracking-widest uppercase text-primary"><span
+            class="material-icons text-lg">shopping_cart</span>(0)</button>
+        <button class="lg:hidden flex items-center" onclick="toggleMobile()"><span
+            class="material-icons text-2xl text-white">menu</span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu"
+    class="fixed inset-0 z-[60] bg-bg-dark/95 backdrop-blur-lg flex flex-col items-center justify-center gap-8">
+    <button class="absolute top-5 right-5" onclick="toggleMobile()"><span
+        class="material-icons text-3xl text-white">close</span></button>
+    <a class="font-heading text-4xl tracking-widest text-white hover:text-primary cursor-pointer"
+      onclick="showPage('marketplace');toggleMobile()">MARKETPLACE</a>
+    <a class="font-heading text-4xl tracking-widest text-white hover:text-primary cursor-pointer"
+      onclick="showPage('sell');toggleMobile()">WE BUY SHOES</a>
+    <a class="font-heading text-4xl tracking-widest text-white hover:text-primary cursor-pointer"
+      onclick="showPage('authenticity');toggleMobile()">AUTHENTICITY</a>
+    <a class="font-heading text-4xl tracking-widest text-white hover:text-primary cursor-pointer"
+      onclick="showPage('drops');toggleMobile()">DROPS</a>
+    <a class="font-heading text-4xl tracking-widest text-white hover:text-primary cursor-pointer"
+      onclick="showPage('request');toggleMobile()">REQUEST</a>
+    <div class="mt-8 flex gap-4">
+      <button class="flex items-center gap-2 text-sm font-bold uppercase text-white/60"><span
+          class="material-icons">person_outline</span>Account</button>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="bg-primary overflow-hidden whitespace-nowrap py-1.5 sm:py-2 border-y border-primary/50">
+    <div
+      class="inline-block animate-marquee uppercase font-bold text-[10px] sm:text-xs tracking-[0.15em] sm:tracking-[0.2em]">
+      LIVE MARKET: AJ1 CHICAGO ▲ $1,240 &nbsp;|&nbsp; TRAVIS SCOTT FRAGMENT ▼ $1,450 &nbsp;|&nbsp; YEEZY 350 SLATE ▲
+      $280 &nbsp;|&nbsp; SB DUNK LOBSTER ▲ $940 &nbsp;|&nbsp; TOM SACHS ▼ $420 &nbsp;|&nbsp; </div>
+    <div
+      class="inline-block animate-marquee uppercase font-bold text-[10px] sm:text-xs tracking-[0.15em] sm:tracking-[0.2em]">
+      LIVE MARKET: AJ1 CHICAGO ▲ $1,240 &nbsp;|&nbsp; TRAVIS SCOTT FRAGMENT ▼ $1,450 &nbsp;|&nbsp; YEEZY 350 SLATE ▲
+      $280 &nbsp;|&nbsp; SB DUNK LOBSTER ▲ $940 &nbsp;|&nbsp; TOM SACHS ▼ $420 &nbsp;|&nbsp; </div>
+  </div>
+
+  <!-- ====== MARKETPLACE PAGE ====== -->
+  <div class="page-section active" id="page-marketplace">
+
+    <!-- Hero: Scroll-Driven Spinning Shoe -->
+    <section id="hero-scroll">
+      <div id="hero-sticky">
+        <div
+          class="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-bg-dark pointer-events-none z-0">
+        </div>
+        <div class="scanline absolute inset-0 z-[5]"></div>
+        <div
+          class="absolute top-[8%] sm:top-[12%] left-1/2 -translate-x-1/2 z-20 text-center pointer-events-none w-full px-4">
+          <p
+            class="text-[10px] sm:text-xs font-bold tracking-[0.3em] sm:tracking-[0.4em] text-primary uppercase mb-1 sm:mb-2">
+            Scroll to Explore</p>
+          <h1
+            class="font-heading text-[4rem] sm:text-[8rem] md:text-[10rem] lg:text-[12rem] leading-none tracking-tight">
+            FAT<span class="text-primary">LACES</span></h1>
+          <p class="text-white/30 text-[10px] sm:text-sm tracking-[0.2em] sm:tracking-[0.3em] uppercase mt-1 sm:mt-2">
+            Premium Sneaker Resale</p>
+        </div>
+        <canvas id="shoe-canvas"></canvas>
+        <div class="absolute bottom-[8%] sm:bottom-[10%] left-1/2 -translate-x-1/2 z-20 text-center pointer-events-none"
+          id="hero-scroll-hint">
+          <span class="material-icons text-primary text-3xl sm:text-4xl animate-bounce">expand_more</span>
+          <p class="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-white/30 mt-1">Scroll Down</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="max-w-[1600px] mx-auto px-4 sm:px-6 py-16 sm:py-28">
+      <div class="text-center mb-10 sm:mb-16">
+        <h2 class="font-heading text-5xl sm:text-7xl md:text-9xl tracking-tight">WHY <span class="text-primary">FAT
+            LACES</span></h2>
+        <p class="text-white/40 text-xs sm:text-sm tracking-widest uppercase mt-3 sm:mt-4">The reseller's edge</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+        <div
+          class="fade-up bg-surface border border-primary/10 rounded-xl p-6 sm:p-10 hover:border-primary/50 transition-all">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-primary/10 flex items-center justify-center mb-4 sm:mb-6">
+            <span class="material-icons text-primary text-2xl sm:text-3xl">verified</span>
+          </div>
+          <h3 class="font-heading text-2xl sm:text-4xl tracking-tight mb-2 sm:mb-3">100% AUTHENTICATED</h3>
+          <p class="text-white/40 text-xs sm:text-sm leading-relaxed">Every pair passes our multi-point AI + expert
+            verification. Zero fakes, zero exceptions.</p>
+        </div>
+        <div
+          class="fade-up bg-surface border border-secondary-blue/10 rounded-xl p-6 sm:p-10 hover:border-secondary-blue/50 transition-all">
+          <div
+            class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-secondary-blue/10 flex items-center justify-center mb-4 sm:mb-6">
+            <span class="material-icons text-secondary-blue text-2xl sm:text-3xl">speed</span>
+          </div>
+          <h3 class="font-heading text-2xl sm:text-4xl tracking-tight mb-2 sm:mb-3">INSTANT PAYOUTS</h3>
+          <p class="text-white/40 text-xs sm:text-sm leading-relaxed">Sell your grails and get paid in minutes. The
+            fastest resale pipeline on the planet.</p>
+        </div>
+        <div
+          class="fade-up bg-surface border border-primary/10 rounded-xl p-6 sm:p-10 hover:border-primary/50 transition-all sm:col-span-2 md:col-span-1">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-primary/10 flex items-center justify-center mb-4 sm:mb-6">
+            <span class="material-icons text-primary text-2xl sm:text-3xl">local_shipping</span>
+          </div>
+          <h3 class="font-heading text-2xl sm:text-4xl tracking-tight mb-2 sm:mb-3">GLOBAL SHIPPING</h3>
+          <p class="text-white/40 text-xs sm:text-sm leading-relaxed">Premium insured shipping to 190+ countries. Your
+            heat arrives safe, every time.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- New Drops Grid -->
+    <section class="max-w-[1600px] mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
+      <div class="flex items-center justify-between mb-6 sm:mb-8 border-b border-primary/20 pb-3 sm:pb-4">
+        <h3 class="font-heading text-3xl sm:text-5xl tracking-tight flex items-center gap-2 sm:gap-3"><span
+            class="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-primary rounded-full animate-pulse"></span>NEW DROPS</h3>
+        <a class="text-[10px] sm:text-xs font-bold tracking-widest text-primary hover:underline" href="#">VIEW ALL</a>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div
+          class="shoe-card group bg-surface border border-primary/10 rounded-xl overflow-hidden hover:border-primary/50 transition-all">
+          <div class="relative"><span
+              class="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 bg-primary text-[8px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">2m
+              AGO</span></div>
+          <div class="aspect-square bg-white/5 relative overflow-hidden shoe-card-wrap">
+            <img class="w-full h-full object-cover shoe-card-img"
+              src="https://images.unsplash.com/photo-1597045566677-8cf032ed6634?w=400&q=80" alt="Air Jordan 1" />
+            <div class="scanline absolute inset-0"></div>
+          </div>
+          <div class="p-3 sm:p-6">
+            <p class="text-[8px] sm:text-[10px] font-bold text-primary tracking-widest uppercase mb-0.5 sm:mb-1">Jordan
+              Brand</p>
+            <h4 class="font-bold text-xs sm:text-lg mb-2 sm:mb-4 tracking-tight leading-tight uppercase">AJ1 'Lost and
+              Found'</h4>
+            <div class="flex items-center justify-between"><span
+                class="font-heading text-xl sm:text-4xl">$485</span><button
+                class="hidden sm:block bg-primary text-white text-[10px] font-black tracking-widest px-4 py-2 rounded-lg glow-red opacity-0 group-hover:opacity-100 transition-all uppercase">Buy</button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="shoe-card group bg-surface border border-primary/10 rounded-xl overflow-hidden hover:border-primary/50 transition-all">
+          <div class="relative"><span
+              class="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 bg-primary text-[8px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">14m
+              AGO</span></div>
+          <div class="aspect-square bg-white/5 relative overflow-hidden shoe-card-wrap">
+            <img class="w-full h-full object-cover shoe-card-img"
+              src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&q=80" alt="Dunk Low" />
+            <div class="scanline absolute inset-0"></div>
+          </div>
+          <div class="p-3 sm:p-6">
+            <p class="text-[8px] sm:text-[10px] font-bold text-primary tracking-widest uppercase mb-0.5 sm:mb-1">Nike SB
+            </p>
+            <h4 class="font-bold text-xs sm:text-lg mb-2 sm:mb-4 tracking-tight leading-tight uppercase">Dunk Low
+              'Panda'</h4>
+            <div class="flex items-center justify-between"><span
+                class="font-heading text-xl sm:text-4xl">$120</span><button
+                class="hidden sm:block bg-primary text-white text-[10px] font-black tracking-widest px-4 py-2 rounded-lg glow-red opacity-0 group-hover:opacity-100 transition-all uppercase">Buy</button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="shoe-card group bg-surface border border-secondary-blue/10 rounded-xl overflow-hidden hover:border-secondary-blue/50 transition-all">
+          <div class="relative"><span
+              class="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 bg-secondary-blue text-[8px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">HOT</span>
+          </div>
+          <div class="aspect-square bg-white/5 relative overflow-hidden shoe-card-wrap">
+            <img class="w-full h-full object-cover shoe-card-img"
+              src="https://images.unsplash.com/photo-1584735175315-9d5df23860e6?w=400&q=80" alt="Travis Scott" />
+            <div class="scanline absolute inset-0"></div>
+          </div>
+          <div class="p-3 sm:p-6">
+            <p class="text-[8px] sm:text-[10px] font-bold text-secondary-blue tracking-widest uppercase mb-0.5 sm:mb-1">
+              Jordan x Travis</p>
+            <h4 class="font-bold text-xs sm:text-lg mb-2 sm:mb-4 tracking-tight leading-tight uppercase">Fragment x TS
+              Low</h4>
+            <div class="flex items-center justify-between"><span
+                class="font-heading text-xl sm:text-4xl">$1,450</span><button
+                class="hidden sm:block bg-secondary-blue text-white text-[10px] font-black tracking-widest px-4 py-2 rounded-lg glow-blue opacity-0 group-hover:opacity-100 transition-all uppercase">Buy</button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="shoe-card group bg-surface border border-primary/10 rounded-xl overflow-hidden hover:border-primary/50 transition-all">
+          <div class="relative"><span
+              class="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 bg-primary text-[8px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">1h
+              AGO</span></div>
+          <div class="aspect-square bg-white/5 relative overflow-hidden shoe-card-wrap">
+            <img class="w-full h-full object-cover shoe-card-img"
+              src="https://images.unsplash.com/photo-1556906781-9a412961c28c?w=400&q=80" alt="Yeezy 350" />
+            <div class="scanline absolute inset-0"></div>
+          </div>
+          <div class="p-3 sm:p-6">
+            <p class="text-[8px] sm:text-[10px] font-bold text-primary tracking-widest uppercase mb-0.5 sm:mb-1">Yeezy
+            </p>
+            <h4 class="font-bold text-xs sm:text-lg mb-2 sm:mb-4 tracking-tight leading-tight uppercase">350 V2 'Slate'
+            </h4>
+            <div class="flex items-center justify-between"><span
+                class="font-heading text-xl sm:text-4xl">$280</span><button
+                class="hidden sm:block bg-primary text-white text-[10px] font-black tracking-widest px-4 py-2 rounded-lg glow-red opacity-0 group-hover:opacity-100 transition-all uppercase">Buy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="relative py-20 sm:py-32 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary-blue/10"></div>
+      <div class="max-w-3xl mx-auto text-center relative z-10 px-4 sm:px-6">
+        <p
+          class="text-[10px] sm:text-xs font-bold tracking-[0.3em] sm:tracking-[0.4em] text-primary uppercase mb-3 sm:mb-4">
+          Exclusive Access</p>
+        <h2 class="font-heading text-5xl sm:text-8xl md:text-[10rem] leading-none mb-6 sm:mb-8">DROP COMING <span
+            class="bg-gradient-to-r from-primary to-secondary-blue bg-clip-text text-transparent">SOON</span></h2>
+        <p class="text-white/40 text-sm sm:text-lg mb-8 sm:mb-12 max-w-lg mx-auto">Join the waitlist for first access to
+          the most exclusive resale drops.</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+          <input
+            class="bg-surface border border-white/10 rounded-lg px-6 sm:px-8 py-4 sm:py-5 text-white w-full sm:w-80 focus:outline-none focus:border-primary transition-colors placeholder:text-white/20 text-sm"
+            placeholder="YOUR EMAIL" type="email" />
+          <button
+            class="btn-glow bg-gradient-to-r from-primary to-secondary-blue text-white font-bold tracking-widest px-8 sm:px-12 py-4 sm:py-5 rounded-lg uppercase text-xs sm:text-sm w-full sm:w-auto hover:scale-105 transition-transform">Join
+            Waitlist</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ====== WE BUY SHOES PAGE ====== -->
+  <div class="page-section" id="page-sell">
+    <section class="max-w-[1600px] mx-auto px-4 sm:px-6 py-16 sm:py-20">
+      <div class="text-center mb-12 sm:mb-16">
+        <h1 class="font-heading text-5xl sm:text-7xl md:text-9xl tracking-tight">WE <span
+            class="text-primary">BUY</span> SHOES</h1>
+        <p class="text-white/40 text-xs sm:text-sm tracking-widest uppercase mt-3 sm:mt-4">Get top dollar for your kicks
+          — fast, easy, guaranteed</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mb-16 sm:mb-20">
+        <div class="fade-up text-center bg-surface border border-primary/10 rounded-xl p-6 sm:p-10">
+          <div
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <span class="font-heading text-3xl sm:text-4xl text-primary">01</span>
+          </div>
+          <h3 class="font-heading text-2xl sm:text-3xl mb-2 sm:mb-3">SEND US PHOTOS</h3>
+          <p class="text-white/40 text-xs sm:text-sm">Snap pics of your pair and we'll give you an instant quote.</p>
+        </div>
+        <div class="fade-up text-center bg-surface border border-secondary-blue/10 rounded-xl p-6 sm:p-10">
+          <div
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-secondary-blue/10 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <span class="font-heading text-3xl sm:text-4xl text-secondary-blue">02</span>
+          </div>
+          <h3 class="font-heading text-2xl sm:text-3xl mb-2 sm:mb-3">SHIP FOR FREE</h3>
+          <p class="text-white/40 text-xs sm:text-sm">We send you a prepaid label. Ship at no cost, zero risk.</p>
+        </div>
+        <div class="fade-up text-center bg-surface border border-primary/10 rounded-xl p-6 sm:p-10">
+          <div
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <span class="font-heading text-3xl sm:text-4xl text-primary">03</span>
+          </div>
+          <h3 class="font-heading text-2xl sm:text-3xl mb-2 sm:mb-3">GET PAID FAST</h3>
+          <p class="text-white/40 text-xs sm:text-sm">Once we verify your shoes, get paid same day via PayPal, Venmo, or
+            direct deposit.</p>
+        </div>
+      </div>
+      <div
+        class="bg-surface border border-primary/20 rounded-2xl p-6 sm:p-12 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
+        <div>
+          <p class="font-heading text-4xl sm:text-6xl text-primary">$2.4M</p>
+          <p class="text-white/40 text-[10px] sm:text-xs uppercase tracking-widest mt-1 sm:mt-2">Paid out this month</p>
+        </div>
+        <div>
+          <p class="font-heading text-4xl sm:text-6xl text-secondary-blue">10K+</p>
+          <p class="text-white/40 text-[10px] sm:text-xs uppercase tracking-widest mt-1 sm:mt-2">Pairs purchased</p>
+        </div>
+        <div>
+          <p class="font-heading text-4xl sm:text-6xl text-primary">&lt;24h</p>
+          <p class="text-white/40 text-[10px] sm:text-xs uppercase tracking-widest mt-1 sm:mt-2">Quote turnaround</p>
+        </div>
+        <div>
+          <p class="font-heading text-4xl sm:text-6xl text-secondary-blue">100%</p>
+          <p class="text-white/40 text-[10px] sm:text-xs uppercase tracking-widest mt-1 sm:mt-2">Free shipping</p>
+        </div>
+      </div>
+      <div class="text-center mt-10 sm:mt-12"><button
+          class="bg-primary text-white font-heading text-xl sm:text-2xl tracking-wider px-10 sm:px-16 py-4 sm:py-5 rounded-lg glow-red hover:scale-105 transition-transform">GET
+          YOUR QUOTE</button></div>
+    </section>
+  </div>
+
+  <!-- ====== AUTHENTICITY PAGE ====== -->
+  <div class="page-section" id="page-authenticity">
+    <section class="max-w-[1600px] mx-auto px-4 sm:px-6 py-16 sm:py-20">
+      <div class="text-center mb-12 sm:mb-16">
+        <h1 class="font-heading text-5xl sm:text-7xl md:text-9xl tracking-tight">OUR <span
+            class="text-secondary-blue">PROCESS</span></h1>
+        <p class="text-white/40 text-xs sm:text-sm tracking-widest uppercase mt-3 sm:mt-4">Every pair. Every time. No
+          exceptions.</p>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 mb-16 sm:mb-20">
+        <div class="space-y-4 sm:space-y-6">
+          <div
+            class="fade-up flex gap-4 sm:gap-6 bg-surface border border-secondary-blue/10 rounded-xl p-5 sm:p-8 hover:border-secondary-blue/40 transition-colors">
+            <div
+              class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-secondary-blue/10 flex items-center justify-center flex-shrink-0">
+              <span class="material-icons text-secondary-blue text-xl sm:text-2xl">visibility</span>
+            </div>
+            <div>
+              <h4 class="font-heading text-xl sm:text-2xl mb-1 sm:mb-2">AI VISUAL SCAN</h4>
+              <p class="text-white/40 text-xs sm:text-sm">Computer vision checks 200+ data points: stitching, materials,
+                logo placement, sole geometry.</p>
+            </div>
+          </div>
+          <div
+            class="fade-up flex gap-4 sm:gap-6 bg-surface border border-secondary-blue/10 rounded-xl p-5 sm:p-8 hover:border-secondary-blue/40 transition-colors">
+            <div
+              class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-secondary-blue/10 flex items-center justify-center flex-shrink-0">
+              <span class="material-icons text-secondary-blue text-xl sm:text-2xl">science</span>
+            </div>
+            <div>
+              <h4 class="font-heading text-xl sm:text-2xl mb-1 sm:mb-2">MATERIAL ANALYSIS</h4>
+              <p class="text-white/40 text-xs sm:text-sm">UV light, texture mapping, and chemical composition tests
+                verify genuine materials.</p>
+            </div>
+          </div>
+          <div
+            class="fade-up flex gap-4 sm:gap-6 bg-surface border border-secondary-blue/10 rounded-xl p-5 sm:p-8 hover:border-secondary-blue/40 transition-colors">
+            <div
+              class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-secondary-blue/10 flex items-center justify-center flex-shrink-0">
+              <span class="material-icons text-secondary-blue text-xl sm:text-2xl">qr_code_scanner</span>
+            </div>
+            <div>
+              <h4 class="font-heading text-xl sm:text-2xl mb-1 sm:mb-2">SKU & BARCODE VERIFY</h4>
+              <p class="text-white/40 text-xs sm:text-sm">Cross-referenced against manufacturer databases and 500K+
+                verified pairs.</p>
+            </div>
+          </div>
+          <div
+            class="fade-up flex gap-4 sm:gap-6 bg-surface border border-primary/10 rounded-xl p-5 sm:p-8 hover:border-primary/40 transition-colors">
+            <div
+              class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <span class="material-icons text-primary text-xl sm:text-2xl">person</span>
+            </div>
+            <div>
+              <h4 class="font-heading text-xl sm:text-2xl mb-1 sm:mb-2">EXPERT SIGN-OFF</h4>
+              <p class="text-white/40 text-xs sm:text-sm">A certified human authenticator gives the final approval.
+                Every pair.</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center justify-center">
+          <div class="relative w-full max-w-xs sm:max-w-md aspect-square">
+            <div class="absolute inset-0 rounded-full border-2 border-dashed border-secondary-blue/20 animate-spin"
+              style="animation-duration:20s"></div>
+            <div class="absolute inset-8 rounded-full border border-secondary-blue/10"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="text-center"><span
+                  class="material-icons text-secondary-blue text-6xl sm:text-8xl">verified_user</span>
+                <p class="font-heading text-2xl sm:text-3xl mt-3 sm:mt-4">100% LEGIT</p>
+                <p class="text-white/30 text-[10px] sm:text-xs tracking-widest uppercase mt-1">or your money back</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ====== DROPS PAGE ====== -->
+  <div class="page-section" id="page-drops">
+    <section class="max-w-[1600px] mx-auto px-4 sm:px-6 py-16 sm:py-20">
+      <div class="text-center mb-12 sm:mb-16">
+        <h1 class="font-heading text-5xl sm:text-7xl md:text-9xl tracking-tight">UPCOMING <span
+            class="text-primary">DROPS</span></h1>
+        <p class="text-white/40 text-xs sm:text-sm tracking-widest uppercase mt-3 sm:mt-4">Don't sleep on these</p>
+      </div>
+      <div class="space-y-4 sm:space-y-6 mb-16 sm:mb-20">
+        <div
+          class="fade-up flex flex-col sm:flex-row items-center gap-4 sm:gap-8 bg-surface border border-primary/10 rounded-xl p-5 sm:p-8 hover:border-primary/40 transition-colors shoe-card">
+          <div class="w-24 h-24 sm:w-32 sm:h-32 bg-white/5 rounded-xl overflow-hidden flex-shrink-0 shoe-card-wrap"><img
+              class="w-full h-full object-cover shoe-card-img"
+              src="https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=300&q=80" alt="AJ4 Thunder" /></div>
+          <div class="flex-grow text-center sm:text-left">
+            <p class="text-[10px] font-bold text-primary tracking-widest uppercase mb-0.5">Jordan Brand</p>
+            <h4 class="font-heading text-2xl sm:text-4xl mb-1 sm:mb-2">AIR JORDAN 4 'THUNDER'</h4>
+            <p class="text-white/40 text-xs sm:text-sm">The 2025 retro. Expected to sell out in under 3 minutes.</p>
+          </div>
+          <div class="text-center sm:text-right flex-shrink-0">
+            <p class="text-[10px] text-white/40 uppercase tracking-widest">Drop Date</p>
+            <p class="font-heading text-4xl sm:text-5xl text-primary">MAR 15</p>
+            <p class="text-xs text-white/30 mt-1">Retail: $210</p>
+          </div>
+        </div>
+        <div
+          class="fade-up flex flex-col sm:flex-row items-center gap-4 sm:gap-8 bg-surface border border-secondary-blue/10 rounded-xl p-5 sm:p-8 hover:border-secondary-blue/40 transition-colors shoe-card">
+          <div class="w-24 h-24 sm:w-32 sm:h-32 bg-white/5 rounded-xl overflow-hidden flex-shrink-0 shoe-card-wrap"><img
+              class="w-full h-full object-cover shoe-card-img"
+              src="https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=300&q=80" alt="New Balance 550" /></div>
+          <div class="flex-grow text-center sm:text-left">
+            <p class="text-[10px] font-bold text-secondary-blue tracking-widest uppercase mb-0.5">New Balance</p>
+            <h4 class="font-heading text-2xl sm:text-4xl mb-1 sm:mb-2">NB 550 'SEA SALT'</h4>
+            <p class="text-white/40 text-xs sm:text-sm">Limited to 5,000 pairs worldwide.</p>
+          </div>
+          <div class="text-center sm:text-right flex-shrink-0">
+            <p class="text-[10px] text-white/40 uppercase tracking-widest">Drop Date</p>
+            <p class="font-heading text-4xl sm:text-5xl text-secondary-blue">MAR 22</p>
+            <p class="text-xs text-white/30 mt-1">Retail: $130</p>
+          </div>
+        </div>
+        <div
+          class="fade-up flex flex-col sm:flex-row items-center gap-4 sm:gap-8 bg-surface border border-primary/10 rounded-xl p-5 sm:p-8 hover:border-primary/40 transition-colors shoe-card">
+          <div class="w-24 h-24 sm:w-32 sm:h-32 bg-white/5 rounded-xl overflow-hidden flex-shrink-0 shoe-card-wrap"><img
+              class="w-full h-full object-cover shoe-card-img"
+              src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&q=80" alt="SB Dunk Lobster" /></div>
+          <div class="flex-grow text-center sm:text-left">
+            <p class="text-[10px] font-bold text-primary tracking-widest uppercase mb-0.5">Nike SB</p>
+            <h4 class="font-heading text-2xl sm:text-4xl mb-1 sm:mb-2">DUNK LOW 'BLUE LOBSTER'</h4>
+            <p class="text-white/40 text-xs sm:text-sm">The rarest Lobster Dunk yet. Ultra-limited.</p>
+          </div>
+          <div class="text-center sm:text-right flex-shrink-0">
+            <p class="text-[10px] text-white/40 uppercase tracking-widest">Drop Date</p>
+            <p class="font-heading text-4xl sm:text-5xl text-primary">APR 01</p>
+            <p class="text-xs text-white/30 mt-1">Retail: $180</p>
+          </div>
+        </div>
+      </div>
+      <div class="text-center bg-surface border border-white/10 rounded-2xl p-8 sm:p-12">
+        <span class="material-icons text-primary text-4xl sm:text-5xl mb-3 sm:mb-4">notifications_active</span>
+        <h3 class="font-heading text-3xl sm:text-4xl mb-2 sm:mb-3">NEVER MISS A DROP</h3>
+        <p class="text-white/40 text-xs sm:text-sm mb-6 sm:mb-8 max-w-md mx-auto">Get push notifications the moment a
+          drop goes live.</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+          <input
+            class="bg-bg-dark border border-white/10 rounded-lg px-6 sm:px-8 py-3 sm:py-4 text-white w-full sm:w-80 focus:outline-none focus:border-primary transition-colors placeholder:text-white/20 text-sm"
+            placeholder="YOUR EMAIL" type="email" />
+          <button
+            class="bg-primary text-white font-heading text-lg sm:text-xl tracking-wider px-8 sm:px-10 py-3 sm:py-4 rounded-lg glow-red hover:scale-105 transition-transform w-full sm:w-auto">NOTIFY
+            ME</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ====== REQUEST PAGE ====== -->
+  <div class="page-section" id="page-request">
+    <section class="max-w-[900px] mx-auto px-4 sm:px-6 py-16 sm:py-20">
+      <div class="text-center mb-12 sm:mb-16">
+        <h1 class="font-heading text-5xl sm:text-7xl md:text-9xl tracking-tight">REQUEST A <span
+            class="text-primary">SHOE</span></h1>
+        <p class="text-white/40 text-xs sm:text-sm tracking-widest uppercase mt-3 sm:mt-4">Can't find your grail? We'll
+          hunt it down for you.</p>
+      </div>
+      <form id="request-form" class="bg-surface border border-primary/20 rounded-2xl p-6 sm:p-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
+          <!-- Brand -->
+          <div class="fade-up">
+            <label
+              class="block text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/60 mb-2">Brand</label>
+            <select
+              class="w-full bg-bg-dark border border-white/10 rounded-lg px-4 py-3 sm:py-4 text-white text-sm focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer"
+              style="background-image:url('data:image/svg+xml;utf8,<svg fill=\'%23ff0033\' viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>');background-repeat:no-repeat;background-position:right 12px center;background-size:20px">
+              <option value="" disabled selected>Select Brand</option>
+              <option>Nike</option>
+              <option>Jordan Brand</option>
+              <option>adidas</option>
+              <option>Yeezy</option>
+              <option>New Balance</option>
+              <option>ASICS</option>
+              <option>Converse</option>
+              <option>Puma</option>
+              <option>Reebok</option>
+              <option>Vans</option>
+              <option>Salomon</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <!-- Shoe Model -->
+          <div class="fade-up">
+            <label class="block text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/60 mb-2">Shoe
+              Model / Name</label>
+            <input type="text"
+              class="w-full bg-bg-dark border border-white/10 rounded-lg px-4 py-3 sm:py-4 text-white text-sm focus:outline-none focus:border-primary transition-colors placeholder:text-white/20"
+              placeholder='e.g. Air Jordan 1 "Chicago"' />
+          </div>
+          <!-- Size -->
+          <div class="fade-up">
+            <label class="block text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/60 mb-2">Size
+              (US)</label>
+            <select
+              class="w-full bg-bg-dark border border-white/10 rounded-lg px-4 py-3 sm:py-4 text-white text-sm focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer"
+              style="background-image:url('data:image/svg+xml;utf8,<svg fill=\'%23ff0033\' viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>');background-repeat:no-repeat;background-position:right 12px center;background-size:20px">
+              <option value="" disabled selected>Select Size</option>
+              <option>US 4</option>
+              <option>US 4.5</option>
+              <option>US 5</option>
+              <option>US 5.5</option>
+              <option>US 6</option>
+              <option>US 6.5</option>
+              <option>US 7</option>
+              <option>US 7.5</option>
+              <option>US 8</option>
+              <option>US 8.5</option>
+              <option>US 9</option>
+              <option>US 9.5</option>
+              <option>US 10</option>
+              <option>US 10.5</option>
+              <option>US 11</option>
+              <option>US 11.5</option>
+              <option>US 12</option>
+              <option>US 12.5</option>
+              <option>US 13</option>
+              <option>US 14</option>
+              <option>US 15</option>
+            </select>
+          </div>
+          <!-- Color -->
+          <div class="fade-up">
+            <label class="block text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/60 mb-2">Primary
+              Color</label>
+            <select
+              class="w-full bg-bg-dark border border-white/10 rounded-lg px-4 py-3 sm:py-4 text-white text-sm focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer"
+              style="background-image:url('data:image/svg+xml;utf8,<svg fill=\'%23ff0033\' viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>');background-repeat:no-repeat;background-position:right 12px center;background-size:20px">
+              <option value="" disabled selected>Select Color</option>
+              <option>Black</option>
+              <option>White</option>
+              <option>Red</option>
+              <option>Blue</option>
+              <option>Green</option>
+              <option>Grey</option>
+              <option>Brown / Tan</option>
+              <option>Pink</option>
+              <option>Orange</option>
+              <option>Yellow</option>
+              <option>Purple</option>
+              <option>Multi-Color</option>
+            </select>
+          </div>
+          <!-- Condition -->
+          <div class="fade-up">
+            <label
+              class="block text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/60 mb-2">Condition</label>
+            <select
+              class="w-full bg-bg-dark border border-white/10 rounded-lg px-4 py-3 sm:py-4 text-white text-sm focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer"
+              style="background-image:url('data:image/svg+xml;utf8,<svg fill=\'%23ff0033\' viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>');background-repeat:no-repeat;background-position:right 12px center;background-size:20px">
+              <option value="" disabled selected>Select Condition</option>
+              <option>Deadstock (DS)</option>
+              <option>Very Near Deadstock (VNDS)</option>
+              <option>Excellent (9/10)</option>
+              <option>Good (7-8/10)</option>
+              <option>Used (5-6/10)</option>
+              <option>Any Condition</option>
+            </select>
+          </div>
+          <!-- Max Budget -->
+          <div class="fade-up">
+            <label class="block text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/60 mb-2">Max
+              Budget</label>
+            <select
+              class="w-full bg-bg-dark border border-white/10 rounded-lg px-4 py-3 sm:py-4 text-white text-sm focus:outline-none focus:border-primary transition-colors appearance-none cursor-pointer"
+              style="background-image:url('data:image/svg+xml;utf8,<svg fill=\'%23ff0033\' viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>');background-repeat:no-repeat;background-position:right 12px center;background-size:20px">
+              <option value="" disabled selected>Select Budget</option>
+              <option>Under $100</option>
+              <option>$100 – $250</option>
+              <option>$250 – $500</option>
+              <option>$500 – $1,000</option>
+              <option>$1,000 – $2,500</option>
+              <option>$2,500+</option>
+              <option>No Limit</option>
+            </select>
+          </div>
+        </div>
+        <!-- Email -->
+        <div class="fade-up mb-4 sm:mb-6">
+          <label class="block text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/60 mb-2">Your
+            Email</label>
+          <input type="email"
+            class="w-full bg-bg-dark border border-white/10 rounded-lg px-4 py-3 sm:py-4 text-white text-sm focus:outline-none focus:border-primary transition-colors placeholder:text-white/20"
+            placeholder="we'll notify you when we find it" />
+        </div>
+        <!-- Notes -->
+        <div class="fade-up mb-6 sm:mb-8">
+          <label class="block text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/60 mb-2">Additional
+            Notes</label>
+          <textarea rows="3"
+            class="w-full bg-bg-dark border border-white/10 rounded-lg px-4 py-3 sm:py-4 text-white text-sm focus:outline-none focus:border-primary transition-colors placeholder:text-white/20 resize-none"
+            placeholder="Specific colorway, year of release, special packaging, etc."></textarea>
+        </div>
+        <!-- Submit -->
+        <button type="button" onclick="submitRequest()"
+          class="w-full btn-glow bg-gradient-to-r from-primary to-secondary-blue text-white font-heading text-2xl sm:text-3xl tracking-wider py-4 sm:py-5 rounded-lg hover:scale-[1.02] transition-transform">SUBMIT
+          REQUEST</button>
+        <div id="request-success" class="hidden mt-6 text-center">
+          <span class="material-icons text-primary text-4xl mb-2">check_circle</span>
+          <p class="font-heading text-2xl">REQUEST SUBMITTED</p>
+          <p class="text-white/40 text-xs mt-1">We'll hunt it down and email you when we find a match.</p>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- ====== FOOTER ====== -->
+  <footer class="border-t border-white/10 py-12 sm:py-20 bg-surface">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
+      <div class="sm:col-span-2">
+        <a class="font-heading text-4xl sm:text-6xl tracking-tight text-primary mb-6 sm:mb-8 block cursor-pointer"
+          onclick="showPage('marketplace')">FAT<span class="text-white">LACES</span></a>
+        <p class="text-white/40 max-w-sm mb-6 sm:mb-8 text-xs sm:text-sm">The world's most aggressive marketplace for
+          premium sneaker resale. Verified authentic, every single time.</p>
+        <div class="flex gap-3 sm:gap-4">
+          <a class="w-9 h-9 sm:w-10 sm:h-10 rounded bg-white/5 flex items-center justify-center hover:bg-primary transition-colors"
+            href="#"><span class="material-icons text-sm">facebook</span></a>
+          <a class="w-9 h-9 sm:w-10 sm:h-10 rounded bg-white/5 flex items-center justify-center hover:bg-primary transition-colors"
+            href="#"><span class="material-icons text-sm">alternate_email</span></a>
+          <a class="w-9 h-9 sm:w-10 sm:h-10 rounded bg-white/5 flex items-center justify-center hover:bg-primary transition-colors"
+            href="#"><span class="material-icons text-sm">camera_alt</span></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="text-[10px] sm:text-xs font-black tracking-[0.2em] uppercase text-white mb-6 sm:mb-8">Navigation</h4>
+        <ul class="space-y-3 sm:space-y-4 text-xs sm:text-sm font-bold text-white/40 uppercase tracking-widest">
+          <li><a class="hover:text-primary transition-colors cursor-pointer"
+              onclick="showPage('marketplace')">Marketplace</a></li>
+          <li><a class="hover:text-primary transition-colors cursor-pointer" onclick="showPage('sell')">We Buy Shoes</a>
+          </li>
+          <li><a class="hover:text-primary transition-colors cursor-pointer"
+              onclick="showPage('authenticity')">Authenticity</a></li>
+          <li><a class="hover:text-primary transition-colors cursor-pointer" onclick="showPage('drops')">Drops</a></li>
+          <li><a class="hover:text-primary transition-colors cursor-pointer" onclick="showPage('request')">Request</a>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-[10px] sm:text-xs font-black tracking-[0.2em] uppercase text-white mb-6 sm:mb-8">Support</h4>
+        <ul class="space-y-3 sm:space-y-4 text-xs sm:text-sm font-bold text-white/40 uppercase tracking-widest">
+          <li><a class="hover:text-primary transition-colors" href="#">FAQ</a></li>
+          <li><a class="hover:text-primary transition-colors" href="#">Shipping</a></li>
+          <li><a class="hover:text-primary transition-colors" href="#">Returns</a></li>
+          <li><a class="hover:text-primary transition-colors" href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div
+      class="max-w-[1600px] mx-auto px-4 sm:px-6 mt-12 sm:mt-20 pt-6 sm:pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center text-[9px] sm:text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] sm:tracking-[0.3em] gap-3 sm:gap-4">
+      <p>&copy; 2025 FAT LACES TRADING CO.</p>
+      <div class="flex gap-6 sm:gap-8"><a href="#">Security</a><a href="#">Terms</a><a href="#">API</a></div>
+    </div>
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    function toggleMobile() { document.getElementById('mobile-menu').classList.toggle('open') }
+
+    function showPage(page) {
+      // Hide all page sections
+      document.querySelectorAll('.page-section').forEach(s => { s.classList.remove('active') });
+      // Show target
+      document.getElementById('page-' + page).classList.add('active');
+      // Update nav highlights
+      document.querySelectorAll('.nav-link').forEach(l => {
+        l.classList.remove('border-b-2', 'border-primary', 'text-primary');
+        l.classList.add('text-white/60');
+      });
+      const active = document.querySelector('.nav-link[data-page="' + page + '"]');
+      if (active) { active.classList.add('border-b-2', 'border-primary'); active.classList.remove('text-white/60') }
+      window.scrollTo(0, 0);
+      // Refresh GSAP triggers and animate new content
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+        gsap.utils.toArray('#page-' + page + ' .fade-up').forEach((el, i) => {
+          gsap.fromTo(el, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.6, delay: i * 0.1, ease: 'power3.out' });
+        });
+      }, 50);
+    }
+
+    // ====== THREE.JS 3D SHOE (GLTFLoader) ======
+    (async function () {
+      const { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, DirectionalLight, PointLight, Box3, Vector3, ACESFilmicToneMapping, CircleGeometry, MeshBasicMaterial, Mesh } = await import('three');
+      const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+      const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
+
+      const canvas = document.getElementById('shoe-canvas');
+      if (!canvas) return;
+
+      // Show loading state
+      const loadingEl = document.createElement('div');
+      loadingEl.id = 'shoe-loading';
+      loadingEl.style.cssText = 'position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);z-index:15;text-align:center;';
+      loadingEl.innerHTML = '<div style="width:40px;height:40px;border:3px solid rgba(255,0,51,0.2);border-top-color:#ff0033;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 8px"></div><p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.4)">Loading 3D Model</p>';
+      const styleTag = document.createElement('style');
+      styleTag.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+      document.head.appendChild(styleTag);
+      canvas.parentElement.appendChild(loadingEl);
+
+      const rect = canvas.getBoundingClientRect();
+      const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setSize(rect.width, rect.height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.toneMapping = ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.4;
+
+      const scene = new Scene();
+      const camera = new PerspectiveCamera(30, rect.width / rect.height, 0.1, 100);
+      camera.position.set(0, 1.5, 5);
+      camera.lookAt(0, 0.4, 0);
+
+      // Lighting
+      scene.add(new AmbientLight(0xffffff, 0.6));
+      const keyLight = new DirectionalLight(0xffffff, 1.5);
+      keyLight.position.set(5, 8, 5);
+      keyLight.castShadow = true;
+      scene.add(keyLight);
+      const backLight = new DirectionalLight(0xffffff, 0.8);
+      backLight.position.set(-3, 5, -5);
+      scene.add(backLight);
+      const rimRed = new PointLight(0xff0033, 3, 15);
+      rimRed.position.set(-4, 2, -2);
+      scene.add(rimRed);
+      const rimBlue = new PointLight(0x0066ff, 2, 15);
+      rimBlue.position.set(4, 2, -3);
+      scene.add(rimBlue);
+      const fillBottom = new PointLight(0xff0033, 1, 10);
+      fillBottom.position.set(0, -2, 2);
+      scene.add(fillBottom);
+
+      // Ground glow
+      const shadowGeo = new CircleGeometry(1.5, 32);
+      const shadowMat = new MeshBasicMaterial({ color: 0xff0033, transparent: true, opacity: 0.12 });
+      const shadowPlane = new Mesh(shadowGeo, shadowMat);
+      shadowPlane.rotation.x = -Math.PI / 2;
+      shadowPlane.position.y = -0.5;
+      scene.add(shadowPlane);
+
+      // Load the actual 3D shoe model
+      const dracoLoader = new DRACOLoader();
+      dracoLoader.setDecoderPath('https://unpkg.com/three@0.160.0/examples/jsm/libs/draco/');
+      const loader = new GLTFLoader();
+      loader.setDRACOLoader(dracoLoader);
+
+      let shoe = null;
+      const MODEL_URL = 'https://raw.githubusercontent.com/jimjabid/3DShoeCustomizer/main/public/shoe-draco.glb';
+
+      loader.load(
+        MODEL_URL,
+        function (gltf) {
+          shoe = gltf.scene;
+
+          // Auto-center and scale
+          const box = new Box3().setFromObject(shoe);
+          const center = box.getCenter(new Vector3());
+          const size = box.getSize(new Vector3());
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale = 2.5 / maxDim;
+          shoe.scale.setScalar(scale);
+          shoe.position.set(-center.x * scale, -center.y * scale + 0.2, -center.z * scale);
+
+          // Enable shadows on all meshes
+          shoe.traverse(function (child) {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+
+          scene.add(shoe);
+
+          // Remove loading indicator
+          if (loadingEl.parentElement) loadingEl.parentElement.removeChild(loadingEl);
+
+          // Scroll-driven 360° spin via GSAP
+          const state = { rotY: 0 };
+          gsap.to(state, {
+            rotY: Math.PI * 2,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: '#hero-scroll',
+              start: 'top top',
+              end: 'bottom bottom',
+              scrub: 0.5,
+              onUpdate: function () { shoe.rotation.y = state.rotY; }
+            }
+          });
+        },
+        undefined,
+        function (err) {
+          console.warn('GLB load failed, using fallback image', err);
+          // Fallback: show a static shoe image instead
+          canvas.style.display = 'none';
+          if (loadingEl.parentElement) loadingEl.parentElement.removeChild(loadingEl);
+          const img = document.createElement('img');
+          img.src = 'https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=800&q=80';
+          img.alt = 'Nike Dunk sneaker';
+          img.className = 'w-[60vw] sm:w-[50vw] max-w-[550px] h-auto relative z-10 drop-shadow-[0_20px_60px_rgba(255,0,51,0.4)] rounded-lg';
+          canvas.parentElement.insertBefore(img, canvas);
+        }
+      );
+
+      gsap.to('#hero-scroll-hint', { opacity: 0, scrollTrigger: { trigger: '#hero-scroll', start: '5% top', end: '15% top', scrub: true } });
+
+      // Render loop with gentle bobbing + pulsing lights
+      function animate() {
+        requestAnimationFrame(animate);
+        if (shoe) {
+          shoe.position.y += ((-0.1 + Math.sin(Date.now() * 0.001) * 0.06) - shoe.position.y) * 0.05;
+        }
+        rimRed.intensity = 2.5 + Math.sin(Date.now() * 0.002) * 0.5;
+        rimBlue.intensity = 1.8 + Math.cos(Date.now() * 0.0015) * 0.4;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Resize
+      window.addEventListener('resize', () => {
+        const r = canvas.getBoundingClientRect();
+        renderer.setSize(r.width, r.height);
+        camera.aspect = r.width / r.height;
+        camera.updateProjectionMatrix();
+      });
+    })();
+
+    // Fade-up animations for initial marketplace page
+    gsap.utils.toArray('#page-marketplace .fade-up').forEach((el, i) => {
+      gsap.to(el, { opacity: 1, y: 0, duration: 0.8, delay: i * 0.1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' } });
+    });
+
+    function submitRequest() {
+      const form = document.getElementById('request-form');
+      const success = document.getElementById('request-success');
+      success.classList.remove('hidden');
+      form.querySelectorAll('input,select,textarea').forEach(el => { el.disabled = true; el.style.opacity = '0.4' });
+      form.querySelector('button[type="button"]').style.display = 'none';
+    }
+  </script>
+</body>
+
+</html>
